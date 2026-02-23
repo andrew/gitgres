@@ -102,3 +102,15 @@ Git objects (commits, trees, blobs, tags) are stored in an `objects` table with 
 The libgit2 backend implements `git_odb_backend` and `git_refdb_backend`, the two interfaces libgit2 needs to treat any storage system as a git repository. The backend reads and writes objects and refs through libpq. When receiving a push, it uses libgit2's packfile indexer to extract individual objects from the incoming pack, then stores each one in Postgres.
 
 The C extension adds a proper `git_oid` type to Postgres (20-byte fixed binary with hex I/O and btree/hash indexing) and C implementations of SHA1 hashing and tree parsing for better performance on large repos.
+
+## Prior art
+
+[libgit2-backends](https://github.com/libgit2/libgit2-backends) -- the official collection of pluggable ODB backends for libgit2. Includes MySQL, SQLite, Redis, and Memcached implementations. No Postgres backend, which is what prompted this project.
+
+[gitbase](https://github.com/src-d/gitbase) -- a MySQL-compatible SQL interface for querying git repositories, built on [go-git](https://github.com/go-git/go-git). Reads from on-disk repos rather than storing objects in the database. The SQL query layer is the goal rather than the storage layer.
+
+[JGit DFS](https://archive.eclipse.org/jgit/docs/jgit-2.0.0.201206130900-r/apidocs/org/eclipse/jgit/storage/dfs/DfsRepository.html) -- JGit's abstract distributed file system storage. Defines the interface for storing git pack files on arbitrary backends. Google's internal git infrastructure builds on this. An earlier attempt (JGit DHT) tried storing objects directly in databases but was abandoned because no database could keep up with the access patterns.
+
+[Gitaly](https://gitlab.com/gitlab-org/gitaly) -- GitLab's git storage service. An RPC server that wraps git operations rather than replacing the storage layer. Still uses the filesystem for actual object storage.
+
+[Dolt](https://github.com/dolthub/dolt) -- a SQL database with git-style versioning (branch, merge, diff) built on [prolly trees](https://github.com/attic-labs/noms). Comes at the problem from the opposite direction: it's a database that borrowed git's semantics, not git storage backed by a database.
