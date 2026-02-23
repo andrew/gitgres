@@ -1,0 +1,8 @@
+*.o
+*.so
+*.dylib
+*.bc
+*.a
+*.pc
+backend/gitgres-backend
+.claude/

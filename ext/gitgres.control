@@ -1,0 +1,4 @@
+comment = 'Git object storage types and functions for PostgreSQL'
+default_version = '0.1'
+module_pathname = '$libdir/gitgres'
+relocatable = true
