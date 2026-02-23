@@ -103,6 +103,12 @@ The libgit2 backend implements `git_odb_backend` and `git_refdb_backend`, the tw
 
 The C extension adds a proper `git_oid` type to Postgres (20-byte fixed binary with hex I/O and btree/hash indexing) and C implementations of SHA1 hashing and tree parsing for better performance on large repos.
 
+## Forgejo
+
+With git data in Postgres, a git forge doesn't need filesystem storage at all. Forgejo already keeps everything except git repos in the database. Its entire git interaction goes through a single Go package (`modules/git`) that shells out to the `git` binary. Replace that package with SQL queries against the gitgres schema and the filesystem dependency disappears. One Postgres instance, one backup, one replication stream.
+
+See [forgejo.md](forgejo.md) for a detailed analysis of Forgejo's git layer and what replacing it would involve.
+
 ## Prior art
 
 [libgit2-backends](https://github.com/libgit2/libgit2-backends) -- the official collection of pluggable ODB backends for libgit2. Includes MySQL, SQLite, Redis, and Memcached implementations. No Postgres backend, which is what prompted this project.
