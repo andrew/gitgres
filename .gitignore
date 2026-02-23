@@ -1,8 +1,24 @@
+# Build artifacts
 *.o
 *.so
 *.dylib
 *.bc
 *.a
 *.pc
+*.dSYM/
+
+# Backend binary
 backend/gitgres-backend
+
+# PGXS build output
+ext/results/
+log/
+
+# Editor / OS
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Claude
 .claude/
