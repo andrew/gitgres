@@ -7,8 +7,9 @@
 *.pc
 *.dSYM/
 
-# Backend binary
+# Backend binaries
 backend/gitgres-backend
+backend/git-remote-gitgres
 
 # PGXS build output
 ext/results/

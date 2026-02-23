@@ -9,19 +9,20 @@ CC = cc
 CFLAGS = -Wall -g -O2 $(LIBGIT2_CFLAGS) -I$(PG_INCLUDEDIR)
 LDFLAGS = $(LIBGIT2_LIBS) -L$(PG_LIBDIR) -lpq
 
-OBJECTS = main.o odb_postgres.o refdb_postgres.o writepack_postgres.o
+SHARED_OBJS = odb_postgres.o refdb_postgres.o writepack_postgres.o
 
-TARGET = gitgres-backend
+all: gitgres-backend git-remote-gitgres
 
-all: $(TARGET)
+gitgres-backend: main.o $(SHARED_OBJS)
+	$(CC) -o $@ main.o $(SHARED_OBJS) $(LDFLAGS)
 
-$(TARGET): $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS) $(LDFLAGS)
+git-remote-gitgres: remote_helper.o $(SHARED_OBJS)
+	$(CC) -o $@ remote_helper.o $(SHARED_OBJS) $(LDFLAGS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJECTS) $(TARGET)
+	rm -f *.o gitgres-backend git-remote-gitgres
 
 .PHONY: all clean
