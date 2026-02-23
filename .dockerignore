@@ -1,0 +1,13 @@
+**/*.o
+**/*.so
+**/*.dylib
+**/*.bc
+**/*.a
+**/*.dSYM/
+backend/gitgres-backend
+backend/git-remote-gitgres
+ext/results/
+log/
+.git
+.claude
+.DS_Store
