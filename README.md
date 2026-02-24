@@ -4,6 +4,29 @@ Store git objects and refs in PostgreSQL tables. Standard `git push`/`clone` wor
 
 Two implementations of the core functions: pure SQL (PL/pgSQL, works on any managed Postgres with pgcrypto) and a C extension (native `git_oid` type, faster SHA1 and tree parsing via OpenSSL).
 
+## Docker
+
+The fastest way to try gitgres. Builds everything and starts Postgres with the schema and both extensions loaded:
+
+```
+docker build -t gitgres .
+docker run --rm -it gitgres
+```
+
+From inside the container:
+
+```
+./backend/gitgres-backend init "dbname=gitgres user=postgres" myrepo
+./backend/gitgres-backend push "dbname=gitgres user=postgres" myrepo /path/to/repo
+psql -U postgres -d gitgres
+```
+
+To run the tests inside the container:
+
+```
+docker exec <container> bash -c "cd /gitgres && make test"
+```
+
 ## Setup
 
 Requires PostgreSQL with pgcrypto, libgit2, and libpq.
