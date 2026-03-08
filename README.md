@@ -2,13 +2,13 @@
 
 Store git objects and refs in PostgreSQL tables. Standard `git push`/`clone` work against the database through a libgit2-based backend.
 
-Two implementations of the core functions: pure SQL (PL/pgSQL, works on any managed Postgres with pgcrypto) and a C extension (native `git_oid` type, faster SHA1 and tree parsing via OpenSSL).
+The extension gives you everything: tables, PL/pgSQL functions, materialized views, plus a native `git_oid` type with fast C implementations of SHA1 hashing and tree parsing. A separate libgit2-based backend handles `git push`/`clone` through libpq.
 
 For more on why you'd want git data in a database, see [Git in Postgres](https://nesbitt.io/2026/02/26/git-in-postgres.html).
 
 ## Docker
 
-The fastest way to try gitgres. Builds everything and starts Postgres with the schema and both extensions loaded:
+The fastest way to try gitgres. Builds everything and starts Postgres with the extension loaded:
 
 ```
 docker build -t gitgres .
@@ -31,29 +31,31 @@ docker exec <container> bash -c "cd /gitgres && make test"
 
 ## Setup
 
-Requires PostgreSQL with pgcrypto, libgit2, and libpq.
+Requires PostgreSQL with pgcrypto, libgit2, libpq, and OpenSSL.
 
 ```
 brew install libgit2
 ```
 
-Create a database and load the schema:
-
-```
-createdb gitgres
-make install-sql PGDATABASE=gitgres
-```
-
-Build the libgit2 backend:
-
-```
-make backend
-```
-
-Build the C extension (optional, for performance):
+Build and install the extension:
 
 ```
 make ext
+make -C ext install
+```
+
+Create a database and enable the extension:
+
+```sql
+CREATE EXTENSION gitgres CASCADE;
+```
+
+This creates all tables (repositories, objects, refs, reflog), functions, and materialized views. The `CASCADE` pulls in pgcrypto automatically.
+
+Build the libgit2 backend (for push/clone support):
+
+```
+make backend
 ```
 
 ## Usage
@@ -126,7 +128,7 @@ Git objects (commits, trees, blobs, tags) are stored in an `objects` table with 
 
 The libgit2 backend implements `git_odb_backend` and `git_refdb_backend`, the two interfaces libgit2 needs to treat any storage system as a git repository. The backend reads and writes objects and refs through libpq. When receiving a push, it uses libgit2's packfile indexer to extract individual objects from the incoming pack, then stores each one in Postgres.
 
-The C extension adds a proper `git_oid` type to Postgres (20-byte fixed binary with hex I/O and btree/hash indexing) and C implementations of SHA1 hashing and tree parsing for better performance on large repos.
+The extension provides a proper `git_oid` type (20-byte fixed binary with hex I/O and btree/hash indexing), C implementations of SHA1 hashing and tree parsing, and the full SQL layer: tables, PL/pgSQL functions for object I/O, tree walking, commit parsing, and ref management, plus materialized views for querying commits and tree entries. [omni_git](https://github.com/andrew/omni_git) builds on this to add HTTP transport and deploy-on-push.
 
 ## Forgejo
 
