@@ -4,6 +4,8 @@ Store git objects and refs in PostgreSQL tables. Standard `git push`/`clone` wor
 
 Two implementations of the core functions: pure SQL (PL/pgSQL, works on any managed Postgres with pgcrypto) and a C extension (native `git_oid` type, faster SHA1 and tree parsing via OpenSSL).
 
+For more on why you'd want git data in a database, see [Git in Postgres](https://nesbitt.io/2026/02/26/git-in-postgres.html).
+
 ## Docker
 
 The fastest way to try gitgres. Builds everything and starts Postgres with the schema and both extensions loaded:
