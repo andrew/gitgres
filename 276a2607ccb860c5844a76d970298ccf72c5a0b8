@@ -1,0 +1,27 @@
+ext/sql/gitgres--0.1.sql
+  095a32fe21027f3b 108-465
+ext/gitgres.control
+  095a32fe21027f3b 4-5
+docker-init.sh
+  095a32fe21027f3b 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "276a2607ccb860c5844a76d970298ccf72c5a0b8",
+  "prompts": {
+    "095a32fe21027f3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b07e714a-3548-4e32-96e3-4ec329e21546",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Andrew Nesbitt <andrewnez@gmail.com>",
+      "messages": [],
+      "total_additions": 361,
+      "total_deletions": 13,
+      "accepted_lines": 361,
+      "overriden_lines": 0
+    }
+  }
+}
